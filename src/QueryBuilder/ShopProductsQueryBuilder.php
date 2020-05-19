@@ -101,7 +101,15 @@ final class ShopProductsQueryBuilder implements QueryBuilderInterface
     private function resolveAttributeQuery(BoolQuery $boolQuery, array $data): void
     {
         foreach ($data as $key => $value) {
-            if (0 === strpos($key, $this->attributePropertyPrefix) && 0 < count($value)) {
+            if (0 === strpos($key, $this->attributePropertyPrefix)) {
+                if (empty($value)) {
+                    continue;
+                }
+
+                if (filter_var($value, FILTER_VALIDATE_BOOLEAN)) {
+                    $value = true;
+                }
+
                 $optionQuery = $this->hasAttributesQueryBuilder->buildQuery(['attribute' => $key, 'attribute_values' => $value]);
                 $boolQuery->addMust($optionQuery);
             }

@@ -15,6 +15,8 @@ namespace BitBag\SyliusElasticsearchPlugin\Form\Type;
 use BitBag\SyliusElasticsearchPlugin\Context\ProductAttributesContextInterface;
 use BitBag\SyliusElasticsearchPlugin\Form\Type\ChoiceMapper\ProductAttributesMapperInterface;
 use BitBag\SyliusElasticsearchPlugin\PropertyNameResolver\ConcatedNameResolverInterface;
+use Sylius\Component\Attribute\AttributeType\CheckboxAttributeType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -52,6 +54,15 @@ final class ProductAttributesFilterType extends AbstractFilterType
             }
 
             $name = $this->attributeNameResolver->resolvePropertyName($productAttribute->getCode());
+
+            if ($productAttribute->getType() === CheckboxAttributeType::TYPE) {
+                $builder->add($name, CheckboxType::class, [
+                    'label' => $productAttribute->getName(),
+                ]);
+
+                continue;
+            }
+
             $choices = $this->productAttributesMapper->mapToChoices($productAttribute);
             $choices = array_unique($choices);
 

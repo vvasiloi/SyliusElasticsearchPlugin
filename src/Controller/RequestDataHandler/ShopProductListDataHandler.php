@@ -83,10 +83,14 @@ final class ShopProductListDataHandler implements DataHandlerInterface
         }
 
         foreach ($requestData[$formName] as $key => $value) {
-            if (is_array($value) && 0 === strpos($key, $propertyPrefix)) {
-                $data[$key] = array_map(function (string $property): string {
-                    return strtolower($property);
-                }, $value);
+            if (0 === strpos($key, $propertyPrefix)) {
+                if (is_array($value)) {
+                    $data[$key] = array_map(function (string $property): string {
+                        return strtolower($property);
+                    }, $value);
+                } elseif (filter_var($value, FILTER_VALIDATE_BOOL)) {
+                    $data[$key] = $value;
+                }
             }
         }
     }
